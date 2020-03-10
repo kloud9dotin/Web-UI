@@ -3,7 +3,7 @@ let model = {
   state: {
     navpostion : 0,
     lastStateHome : 1,
-    theme: 0
+    theme: localStorage.getItem("theme") || 0
   },
   data : {
     icons : {
@@ -25,8 +25,31 @@ let model = {
 
 }
 
+function changeNav(x) {
+  model.state.navpostion = x
+  if (x == 1 ) { 
+    model.state.navpostion = 1
+    app.update("network")}
+  else { 
+    model.state.navpostion = 0
+    app.update("home")}
+  return
+}
 
-settingsIconClasses = ".h2.w2.pa2"
+function changeTheme() {
+  if (model.state.theme == 0 ) {
+    document.body.classList.add("bg-black")
+    document.body.classList.remove("bg-white")
+    model.state.theme = 1
+    localStorage.setItem("theme", model.state.theme)
+  }
+  else {
+    document.body.classList.remove("bg-black")
+    document.body.classList.add("bg-white")
+    model.state.theme = 0
+    localStorage.setItem("theme", model.state.theme)
+  }
+}
 
 class SvgIcon {
   constructor(name) {
@@ -49,18 +72,6 @@ const networkIcon = svg(
   svg("symbol", { id: "network", viewBox: "0 0 640 512" }, svg("path", { d:"M634.91 154.88C457.74-8.99 182.19-8.93 5.09 154.88c-6.66 6.16-6.79 16.59-.35 22.98l34.24 33.97c6.14 6.1 16.02 6.23 22.4.38 145.92-133.68 371.3-133.71 517.25 0 6.38 5.85 16.26 5.71 22.4-.38l34.24-33.97c6.43-6.39 6.3-16.82-.36-22.98zM320 352c-35.35 0-64 28.65-64 64s28.65 64 64 64 64-28.65 64-64-28.65-64-64-64zm202.67-83.59c-115.26-101.93-290.21-101.82-405.34 0-6.9 6.1-7.12 16.69-.57 23.15l34.44 33.99c6 5.92 15.66 6.32 22.05.8 83.95-72.57 209.74-72.41 293.49 0 6.39 5.52 16.05 5.13 22.05-.8l34.44-33.99c6.56-6.46 6.33-17.06-.56-23.15z"})),
   svg("use", { xlink: { href: "#network" } })
 );
-
-
-function changeNav(x) {
-  model.state.navpostion = x
-  if (x == 1 ) { 
-    model.state.navpostion = 1
-    app.update("network")}
-  else { 
-    model.state.navpostion = 0
-    app.update("home")}
-  return
-}
 
 class TopBar {
   constructor() {
@@ -144,18 +155,7 @@ class SettingsMenu {
   constructor() {
     this.settingsNav = el("div.w-100.h3.sticky.top-0.flex.z-999.bg-inherit.pa2", el("div", {onclick:function(e){changeNav(model.state.navpostion)}},"back"), el("div.flex-grow-1.tc" , "Settings"))
     this.about = el("div.w-100", " This is the settings page")
-    this.toggleTheme = el("div.w-100", {onclick:function(e){
-        if (model.state.theme == 0 ) {
-          document.body.classList.add("bg-black")
-          document.body.classList.remove("bg-white")
-          model.state.theme = 1
-        }
-        else {
-          document.body.classList.remove("bg-black")
-          document.body.classList.add("bg-white")
-          model.state.theme = 0
-        }
-    }}, "Toggle Theme")
+    this.toggleTheme = el("div.w-100", {onclick:function(e){changeTheme()}}, "Toggle Theme")
     this.el = el("div.w-100.h-100", this.settingsNav, this.about, this.toggleTheme)
   }
   onmount() {
@@ -267,6 +267,7 @@ const app = router('.app.h-100', {
 const mainNode = el("div.w-100.h-100.flex.justify-center", {id:"mainnode"},el("div.w-100.h-100.mw8-l", app))
 
 function main() {
+  model.state.theme == 0 ? document.body.classList.add("bg-white"):document.body.classList.add("bg-black")
   mount(document.body, mainNode)
   app.update('home')
   unconnecteDeviceList.update(unconnectedDeviceListData)
