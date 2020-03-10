@@ -1,10 +1,23 @@
 html{margin:0;padding:0;height:100%;box-sizing: border-box; overflow-y: scroll;
     scrollbar-width: none; /* Firefox */
     -ms-overflow-style: none;}
-body {margin:0;height:100%;font-family:"Roboto", "Helvetica", "Arial", sans-serif;line-height:1.6;color:#566b78;background:white;}
+body {margin:0;height:100%;font-family:"Roboto", "Helvetica", "Arial", sans-serif;line-height:1.6;color:#566b78;}
 
 div {
   background-color: inherit;
+  color: inherit;
+}
+
+select {
+  color: inherit;
+	-webkit-appearance: none;
+	-moz-appearance: none;
+	-ms-appearance: none;
+	-o-appearance: none;
+  appearance: none;
+}
+select::after {
+  content: "this is it down"
 }
 
 .app {
@@ -12,7 +25,7 @@ div {
 }
 
 svg {
-  fill: #566b78;
+  fill: currentColor;
 }
 
 .slideinleft {

@@ -1,4 +1,4 @@
-const { el, svg, router, mount, list, text } = redom
+//const { el, svg, router, mount, list, text } = redom
 let model = { 
   state: {
     navpostion : 0,
@@ -18,6 +18,10 @@ let model = {
       network : {
         classNames: ".h-50.w-50",
         path : "M634.91 154.88C457.74-8.99 182.19-8.93 5.09 154.88c-6.66 6.16-6.79 16.59-.35 22.98l34.24 33.97c6.14 6.1 16.02 6.23 22.4.38 145.92-133.68 371.3-133.71 517.25 0 6.38 5.85 16.26 5.71 22.4-.38l34.24-33.97c6.43-6.39 6.3-16.82-.36-22.98zM320 352c-35.35 0-64 28.65-64 64s28.65 64 64 64 64-28.65 64-64-28.65-64-64-64zm202.67-83.59c-115.26-101.93-290.21-101.82-405.34 0-6.9 6.1-7.12 16.69-.57 23.15l34.44 33.99c6 5.92 15.66 6.32 22.05.8 83.95-72.57 209.74-72.41 293.49 0 6.39 5.52 16.05 5.13 22.05-.8l34.44-33.99c6.56-6.46 6.33-17.06-.56-23.15z"
+      },
+      leftArrow : {
+        classNames: ".h2.w2.pa2",
+        path:"M257.5 445.1l-22.2 22.2c-9.4 9.4-24.6 9.4-33.9 0L7 273c-9.4-9.4-9.4-24.6 0-33.9L201.4 44.7c9.4-9.4 24.6-9.4 33.9 0l22.2 22.2c9.5 9.5 9.3 25-.4 34.3L136.6 216H424c13.3 0 24 10.7 24 24v32c0 13.3-10.7 24-24 24H136.6l120.5 114.8c9.8 9.3 10 24.8.4 34.3z"
       }
       
     }
@@ -61,26 +65,39 @@ class SvgIcon {
   }
 }
 
-const devicesIcon = svg(
-  "svg.h-50",
-  svg("symbol", { id: "devices", viewBox: "0 0 576 512" }, svg("path", { d:"M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"})),
-  svg("use", { xlink: { href: "#devices" } })
-);
+class Option {
+	constructor() {
+			this.el = el("option")
+	}
+	update(data) {
+			this.el.textContent = data[0]
+			this.el.value = data[1]
+	}
+}
 
-const networkIcon = svg(
-  "svg.h-50",
-  svg("symbol", { id: "network", viewBox: "0 0 640 512" }, svg("path", { d:"M634.91 154.88C457.74-8.99 182.19-8.93 5.09 154.88c-6.66 6.16-6.79 16.59-.35 22.98l34.24 33.97c6.14 6.1 16.02 6.23 22.4.38 145.92-133.68 371.3-133.71 517.25 0 6.38 5.85 16.26 5.71 22.4-.38l34.24-33.97c6.43-6.39 6.3-16.82-.36-22.98zM320 352c-35.35 0-64 28.65-64 64s28.65 64 64 64 64-28.65 64-64-28.65-64-64-64zm202.67-83.59c-115.26-101.93-290.21-101.82-405.34 0-6.9 6.1-7.12 16.69-.57 23.15l34.44 33.99c6 5.92 15.66 6.32 22.05.8 83.95-72.57 209.74-72.41 293.49 0 6.39 5.52 16.05 5.13 22.05-.8l34.44-33.99c6.56-6.46 6.33-17.06-.56-23.15z"})),
-  svg("use", { xlink: { href: "#network" } })
-);
+class SelectSection {
+	constructor(text,data, defaultVal) {
+		this.value = defaultVal
+		this.text = text
+		this.select =list('select.bg-inherit.bn', Option)
+		this.el =el('div',this.text,this.select)
+		this.select.id = "test"
+		this.update(data)
+  }
+	update(data) {
+		this.select.update(data)
+	}
+}
 
 class TopBar {
   constructor() {
-    this.update()
-  }
-  update() {
-    this.title = el('div.pa2.flex-grow-1.al.flex.items-center', "PolNet")
+    this.networkSelect = new SelectSection("",[['54:A3:1B:42:37:E4',0],['54:A3:1B:42:39:30',1],['54:A3:1B:42:34:2C',3]],0)
+    this.title = el('div.pa2.flex-grow-1.al.flex.items-center', this.networkSelect)
     this.setting = el('div.pa2.flex.justify-end', {onclick:function(e){app.update("settings")}}, new SvgIcon("settings"))
     this.el = el('div.w-100.mw8-l.h3.h3-l.fixed.top-0.flex.justify-end.z-999.bg-inherit', this.title, this.setting )
+  }
+  update() {
+    this.networkSelect.update()
   }
 }
 
@@ -153,10 +170,13 @@ const deniedDeviceList = list("div.w-100.mb5", DeviceListCard)
 
 class SettingsMenu {
   constructor() {
-    this.settingsNav = el("div.w-100.h3.sticky.top-0.flex.z-999.bg-inherit.pa2", el("div", {onclick:function(e){changeNav(model.state.navpostion)}},"back"), el("div.flex-grow-1.tc" , "Settings"))
-    this.about = el("div.w-100", " This is the settings page")
-    this.toggleTheme = el("div.w-100", {onclick:function(e){changeTheme()}}, "Toggle Theme")
-    this.el = el("div.w-100.h-100", this.settingsNav, this.about, this.toggleTheme)
+    this.settingsNav = el("div.w-100.h3.sticky.top-0.flex.z-999.bg-inherit.pa2", el("div", {onclick:function(e){changeNav(model.state.navpostion)}}, new SvgIcon("leftArrow")), el("div.flex-grow-1.tc" , "Settings"))
+    this.about = el("div.w-100.pa2", " This is the settings page")
+    this.toggleTheme = el("div.w-100.pa2", {onclick:function(e){changeTheme()}}, "Toggle Theme")
+    this.changelog = el("div.pt5.pa2",el("h3","Change Log"),el('ul', el('li', "Added Select option to toggle between different MAC-ID"),
+     el('li', "Change Data Structure to single JSON object"), 
+     el('li', "Added table in network tab")))
+    this.el = el("div.w-100.h-100", this.settingsNav, this.about, this.toggleTheme, this.changelog)
   }
   onmount() {
     this.el.classList.add("slideinright")
@@ -189,9 +209,10 @@ class HomePage {
 
 class NetworkPage {
   constructor() {
-    this.el = el("div.h-100.w-100.f4.z-0", new TopBar(),new BottomNav())
+    this.el = el("div.h-100.w-100.f4.z-0", new TopBar(), tableApp, new BottomNav())
   }
   onmount() {
+    detailsTable.update()
     if (!model.state.lastStateHome) {
       console.log("yes")
       this.el.classList.add("slideinleft")
@@ -209,7 +230,7 @@ class NetworkPage {
 class DeviceInfo {
   constructor() {
     this.deviceMac, this.ipaddr, this.name, this.connectState
-    this.deviceDetailsNav = el("div.w-100.h3.sticky.top-0.flex.z-999.bg-inherit.pa2", el("div", {onclick:function(e){app.update("home")}},"back"), el("div.flex-grow-1.tc" , "Device Details"))
+    this.deviceDetailsNav = el("div.w-100.h3.sticky.top-0.flex.z-999.bg-inherit.pa2", el("div", {onclick:function(e){app.update("home")}},new SvgIcon("leftArrow")), el("div.flex-grow-1.tc" , "Device Details"))
     this.MACID = el("div.w-100")
     this.IPADDR = el("div.w-100")
     this.nameLabel = el("span", "Name ")
@@ -270,9 +291,9 @@ function main() {
   model.state.theme == 0 ? document.body.classList.add("bg-white"):document.body.classList.add("bg-black")
   mount(document.body, mainNode)
   app.update('home')
-  unconnecteDeviceList.update(unconnectedDeviceListData)
-  allowedDeviceList.update(connectedDeviceListData)
-  deniedDeviceList.update(deniedDeviceListData)
+  unconnecteDeviceList.update(appData.unconnectedDeviceListData)
+  allowedDeviceList.update(appData.connectedDeviceListData)
+  deniedDeviceList.update(appData.deniedDeviceListData)
 }
 
 
