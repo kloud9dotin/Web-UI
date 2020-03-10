@@ -1,0 +1,46 @@
+html{margin:0;padding:0;height:100%;box-sizing: border-box; overflow-y: scroll;
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none;}
+body {margin:0;height:100%;font-family:"Roboto", "Helvetica", "Arial", sans-serif;line-height:1.6;color:#566b78;background:white;}
+
+div {
+  background-color: inherit;
+}
+
+.app {
+    background-color: inherit;
+}
+
+svg {
+  fill: #566b78;
+}
+
+.slideinleft {
+  animation-duration: 0.5s;
+  animation-name: slideinl;
+}
+
+.slideinright {
+    animation-duration: 0.5s;
+    animation-name: slideinr;
+}
+
+@keyframes slideinl {
+    from {
+        margin-left: -100%;
+      }
+    
+      to {
+        margin-left: 0%;
+      }
+} 
+
+@keyframes slideinr {
+    from {
+        margin-left: 100%;
+      }
+    
+      to {
+        margin-left: 0%;
+      }
+}
