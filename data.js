@@ -24,12 +24,12 @@ let routerData = {
   lastUpdate : "",
   configuration : {},
   devices: {
-    "ab:cd:ef:gh" : {name :"router", status: 1,manufacturer: "Linksys",ipaddr: "192.168.1.128"},
-    "ac:bd:ef:gh" : {name :"phone", status: 1,manufacturer: "Oneplus",ipaddr: "192.168.1.129"},
-    "ab:cd:ef:hg" : {name :"generic", status: 1,manufacturer: "Gigabyte",ipaddr: "192.168.1.125"},
-    "ab:dc:ef:gh" : {name :"chromecast", status: 1,manufacturer: "Google",ipaddr: "192.168.1.121"},
-    "cd:ef:gh:ij" : {name : "", status : 0,manufacturer: "Microsoft",ipaddr: "192.168.1.200"},
-    "ef:gh:ij:kl" : {name : "phone", status: 2,manufacturer: "Apple",ipaddr: "192.168.1.205"}
+    "ab:cd:ef:gh" : {name :"router", status: 1,ipaddr: "192.168.1.128"},
+    "ac:bd:ef:gh" : {name :"phone", status: 1,ipaddr: "192.168.1.129", type :"mobile"},
+    "ab:cd:ef:hg" : {name :"generic", status: 1,ipaddr: "192.168.1.125"},
+    "ab:dc:ef:gh" : {name :"chromecast", status: 1,ipaddr: "192.168.1.121", type: "cast"},
+    "cd:ef:gh:ij" : {name : "", status : 0,ipaddr: "192.168.1.200", type :"mobile" },
+    "ef:gh:ij:kl" : {name : "phone", status: 2,ipaddr: "192.168.1.205", type :"mobile"}
 
   },
   telemetry : [

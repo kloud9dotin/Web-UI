@@ -31,8 +31,19 @@ let model = {
       dashboard : {
         classNames: ".h-50.w-50",
         path:"M288 32C128.94 32 0 160.94 0 320c0 52.8 14.25 102.26 39.06 144.8 5.61 9.62 16.3 15.2 27.44 15.2h443c11.14 0 21.83-5.58 27.44-15.2C561.75 422.26 576 372.8 576 320c0-159.06-128.94-288-288-288zm0 64c14.71 0 26.58 10.13 30.32 23.65-1.11 2.26-2.64 4.23-3.45 6.67l-9.22 27.67c-5.13 3.49-10.97 6.01-17.64 6.01-17.67 0-32-14.33-32-32S270.33 96 288 96zM96 384c-17.67 0-32-14.33-32-32s14.33-32 32-32 32 14.33 32 32-14.33 32-32 32zm48-160c-17.67 0-32-14.33-32-32s14.33-32 32-32 32 14.33 32 32-14.33 32-32 32zm246.77-72.41l-61.33 184C343.13 347.33 352 364.54 352 384c0 11.72-3.38 22.55-8.88 32H232.88c-5.5-9.45-8.88-20.28-8.88-32 0-33.94 26.5-61.43 59.9-63.59l61.34-184.01c4.17-12.56 17.73-19.45 30.36-15.17 12.57 4.19 19.35 17.79 15.17 30.36zm14.66 57.2l15.52-46.55c3.47-1.29 7.13-2.23 11.05-2.23 17.67 0 32 14.33 32 32s-14.33 32-32 32c-11.38-.01-20.89-6.28-26.57-15.22zM480 384c-17.67 0-32-14.33-32-32s14.33-32 32-32 32 14.33 32 32-14.33 32-32 32z"
-      }
-      
+      },
+      mobile : {
+        classNames: ".h-50.w-50",
+        path:"M272 0H48C21.5 0 0 21.5 0 48v416c0 26.5 21.5 48 48 48h224c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zM160 480c-17.7 0-32-14.3-32-32s14.3-32 32-32 32 14.3 32 32-14.3 32-32 32zm112-108c0 6.6-5.4 12-12 12H60c-6.6 0-12-5.4-12-12V60c0-6.6 5.4-12 12-12h200c6.6 0 12 5.4 12 12v312z"
+      },
+      cast : {
+        classNames: ".h-50.w-50",
+        path:"M447.83 64H64a42.72 42.72 0 0 0-42.72 42.72v63.92H64v-63.92h383.83v298.56H298.64V448H448a42.72 42.72 0 0 0 42.72-42.72V106.72A42.72 42.72 0 0 0 448 64zM21.28 383.58v63.92h63.91a63.91 63.91 0 0 0-63.91-63.92zm0-85.28V341a106.63 106.63 0 0 1 106.64 106.66v.34h42.72a149.19 149.19 0 0 0-149-149.36h-.33zm0-85.27v42.72c106-.1 192 85.75 192.08 191.75v.5h42.72c-.46-129.46-105.34-234.27-234.8-234.64z"
+      },
+      generic : {
+        classNames: ".h-50.w-50",
+        path:"M256 56c110.532 0 200 89.451 200 200 0 110.532-89.451 200-200 200-110.532 0-200-89.451-200-200 0-110.532 89.451-200 200-200m0-48C119.033 8 8 119.033 8 256s111.033 248 248 248 248-111.033 248-248S392.967 8 256 8zm0 168c-44.183 0-80 35.817-80 80s35.817 80 80 80 80-35.817 80-80-35.817-80-80-80z"
+      }      
     }
     }
 
@@ -151,31 +162,35 @@ class DeviceListCard {
   }
   update(data) {
     this.ipaddr = routerData.devices[data].ipaddr
-    this.name = routerData.devices[data].name
-    this.manufacturer = routerData.devices[data].manufacturer
+    this.name = routerData.devices[data].name || ""
     this.macid = data
     let macid = this.macid
     //let name  = this.name
     //let ipaddr = this.ipaddr
     this.connectState = routerData.devices[data].status
     //let connectState = this.connectState
-    this.connectionStateRadio = el("form.pa2.w-100.tc", {name:"connectionState",}, el("input", {type:"radio",name:"connectionState",id:"allow",value:"allow"}),el("label", {for:"allow"}, "Allow"),el("input", {type:"radio",name:"connectionState",id:"deny",value:"deny"}),el("label", {for:"deny"}, "Deny"))
-    this.confirmAction = el("div.w100.tc", el("button", "Apply"), el("button", "Discard"))
-    this.nameInput = el("input.pa2", {onclick:function(e) {e.stopPropagation()},placeholder:this.name})
-    this.logo = el("div.w-10")
-    this.deviceSummary = el("div.flex-grow-1.pa2", el("div.f6.f4-l", (model.state.expandDevice == macid ? this.nameInput  : this.name)), el("div.f7.f5-l", this.ipaddr))
-    this.deviceManufacturer = el("div.flex-grow-1.pa2.tr", el("div.f6.f4-l", this.manufacturer), el("div.f7.f5-l", this.macid))
-    this.addDevice = el("div.w-100.flex", el("button.bg-green.bn.f5.pa1.flex-grow-1", "accept"),el("button.bn.bg-red.f5.pa1.flex-grow-1", "reject"))
-    this.el = el("div.w-100.pa2.", el("div.w-100.bt.flex.justify-end", {onclick:function(e){
+    this.connectionStateRadio = el("form.pa2.w-100.tc", {name:"connectionState",}, el("span.pa2", "Access:"), el("input.pa2", {type:"radio",name:"connectionState",id:"allow",value:"allow"}),el("label.pa2", {for:"allow"}, "Allow"),el("input.pa2", {type:"radio",name:"connectionState",id:"deny",value:"deny"}),el("label.pa2", {for:"deny"}, "Deny"))
+    this.confirmAction = el("div.w100.tc", el("button.bn.w-50.bg-green.pa2", {onclick:function() {
+      model.state.expandDevice = ""
+      Devices.update()
+    }}, "Apply"), el("button.bn.w-50.bg-red.pa2", {onclick:function() {
+      model.state.expandDevice = ""
+      Devices.update()
+    }}, "Cancel"))
+    this.nameInput = el("div.tc", el("span", "Name: "),el("input.pa2", {onclick:function(e) {e.stopPropagation()},placeholder:this.name}))
+    this.logo = el("div.h3.w3.pa2.flex.items-center",(routerData.devices[data].type ? new SvgIcon(routerData.devices[data].type): new SvgIcon("generic")))
+    this.deviceSummary = el("div.flex-grow-1.pa2", el("div.f6.f4-l", this.ipaddr))
+    this.deviceManufacturer = el("div.flex-grow-1.pa2.tr", el("div.f6.f4-l", (this.name != ""? this.name : this.macid)))
+    this.el = el("div.w-100.pa2.", el("div.w-100.bt.flex.justify-end.items-center", {onclick:function(e){
       if (model.state.expandDevice == macid) {
-        model.state.expandDevice = ""
+        return
       }
       else {
         model.state.expandDevice = macid
       }
       Devices.update()
       /*app.update("details", [macid, ipaddr, name, connectState] )*/}
-    }, this.logo, this.deviceSummary, this.deviceManufacturer), (model.state.expandDevice == macid && this.connectionStateRadio),(model.state.expandDevice == macid && this.confirmAction) )
+    }, this.logo, this.deviceSummary, this.deviceManufacturer), (model.state.expandDevice == macid && this.nameInput), (model.state.expandDevice == macid && this.connectionStateRadio),(model.state.expandDevice == macid && this.confirmAction) )
   }   
 }
 
@@ -213,7 +228,7 @@ class SettingsMenu {
 class DevicesPage {
   constructor() {
     
-    this.el = el("div.h-100.w-100.f4.z-0.bg-inherit", new TopBar(), summaryComponent, el("div.pa2","Pending"), unconnecteDeviceList, el("div.pa2", "Allowed"), allowedDeviceList,  el("div.pa2", "Denied"), deniedDeviceList,  new BottomNav())
+    this.el = el("div.h-100.w-100.f4.z-0.bg-inherit", new TopBar(), summaryComponent, el("div.pa2.yellow","Pending"), unconnecteDeviceList, el("div.pa2.green", "Allowed"), allowedDeviceList,  el("div.pa2.red", "Denied"), deniedDeviceList,  new BottomNav())
   }
   onmount() {
     if (!model.state.lastStateHome) {
@@ -251,7 +266,7 @@ class DashboardPage {
 
   }
 }
-
+/*
 class DeviceInfo {
   constructor() {
     this.deviceMac, this.ipaddr, this.name, this.connectState
@@ -298,16 +313,16 @@ class DeviceInfo {
     model.state.lastStateHome = 0
   }
 }
-
+*/
 const settingsMenu = new SettingsMenu()
 const Dashboard = new DashboardPage()
 const Devices = new DevicesPage()
-const deviceInfo = new DeviceInfo()
+//const deviceInfo = new DeviceInfo()
 const app = router('.app.h-100', {
   devices: Devices,
   settings: settingsMenu,
   dashboard: Dashboard,
-  details: deviceInfo
+  //details: deviceInfo
 })
 const mainNode = el("div.w-100.h-100.flex.justify-center", {id:"mainnode"},el("div.w-100.h-100.mw8-l", app))
 
