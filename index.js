@@ -1,7 +1,7 @@
-//const { el, svg, router, mount, list, text } = redom
+const { el, svg, router, mount, list, text } = redom
 let model = { 
   state: {
-    navpostion : 0,
+    navposition : 0,
     lastStateHome : 1,
     theme: localStorage.getItem("theme") || 0
   },
@@ -22,6 +22,10 @@ let model = {
       leftArrow : {
         classNames: ".h2.w2.pa2",
         path:"M257.5 445.1l-22.2 22.2c-9.4 9.4-24.6 9.4-33.9 0L7 273c-9.4-9.4-9.4-24.6 0-33.9L201.4 44.7c9.4-9.4 24.6-9.4 33.9 0l22.2 22.2c9.5 9.5 9.3 25-.4 34.3L136.6 216H424c13.3 0 24 10.7 24 24v32c0 13.3-10.7 24-24 24H136.6l120.5 114.8c9.8 9.3 10 24.8.4 34.3z"
+      },
+      dashboard : {
+        classNames: ".h-50.w-50",
+        path:"M288 32C128.94 32 0 160.94 0 320c0 52.8 14.25 102.26 39.06 144.8 5.61 9.62 16.3 15.2 27.44 15.2h443c11.14 0 21.83-5.58 27.44-15.2C561.75 422.26 576 372.8 576 320c0-159.06-128.94-288-288-288zm0 64c14.71 0 26.58 10.13 30.32 23.65-1.11 2.26-2.64 4.23-3.45 6.67l-9.22 27.67c-5.13 3.49-10.97 6.01-17.64 6.01-17.67 0-32-14.33-32-32S270.33 96 288 96zM96 384c-17.67 0-32-14.33-32-32s14.33-32 32-32 32 14.33 32 32-14.33 32-32 32zm48-160c-17.67 0-32-14.33-32-32s14.33-32 32-32 32 14.33 32 32-14.33 32-32 32zm246.77-72.41l-61.33 184C343.13 347.33 352 364.54 352 384c0 11.72-3.38 22.55-8.88 32H232.88c-5.5-9.45-8.88-20.28-8.88-32 0-33.94 26.5-61.43 59.9-63.59l61.34-184.01c4.17-12.56 17.73-19.45 30.36-15.17 12.57 4.19 19.35 17.79 15.17 30.36zm14.66 57.2l15.52-46.55c3.47-1.29 7.13-2.23 11.05-2.23 17.67 0 32 14.33 32 32s-14.33 32-32 32c-11.38-.01-20.89-6.28-26.57-15.22zM480 384c-17.67 0-32-14.33-32-32s14.33-32 32-32 32 14.33 32 32-14.33 32-32 32z"
       }
       
     }
@@ -30,13 +34,13 @@ let model = {
 }
 
 function changeNav(x) {
-  model.state.navpostion = x
+  model.state.navposition = x
   if (x == 1 ) { 
-    model.state.navpostion = 1
-    app.update("network")}
-  else { 
-    model.state.navpostion = 0
+    model.state.navposition = 1
     app.update("home")}
+  else { 
+    model.state.navposition = 0
+    app.update("dashboard")}
   return
 }
 
@@ -103,20 +107,20 @@ class TopBar {
 
 class BottomNav {
   constructor() {
-    console.log(model.state.navpostion)
-    this.devices = el('div.w-50.h-100.tc.f5' + (model.state.navpostion ==  0 ? ".blue" : ""), {onclick:function(e){changeNav(0)}}, new SvgIcon("devices"), el("div", "Devices")) 
-    this.network = el('div.w-50.h-100.tc.f5' + (model.state.navpostion ==  1 ? ".blue" : ""), {onclick:function(e){changeNav(1)}}, new SvgIcon("network") , el("div", "Network"))
-		this.el = el('div.w-100.mw8-l.h3.h3-l.fixed.bottom-0.flex.shadow-1.pa1.z-999.bg-inherit', this.devices, this.network)
+    console.log(model.state.navposition)
+    this.devices = el('div.w-50.h-100.tc.f5' + (model.state.navposition ==  0 ? ".blue" : ""), {onclick:function(e){changeNav(1)}}, new SvgIcon("devices"), el("div", "Devices")) 
+    this.dashboard = el('div.w-50.h-100.tc.f5' + (model.state.navposition ==  1 ? ".blue" : ""), {onclick:function(e){changeNav(0)}}, new SvgIcon("dashboard") , el("div", "Dashboard"))
+		this.el = el('div.w-100.mw8-l.h3.h3-l.fixed.bottom-0.flex.shadow-1.pa1.z-999.bg-inherit', this.dashboard, this.devices)
   }
   onmount() {
-    switch (model.state.navpostion) {
+    switch (model.state.navposition) {
       case 0 :
-        this.devices.classList.add("blue")
-        this.network.classList.remove("blue")
+        this.dashboard.classList.add("blue")
+        this.devices.classList.remove("blue")
         break
       case 1 :
-        this.devices.classList.remove("blue")
-        this.network.classList.add("blue")
+        this.dashboard.classList.remove("blue")
+        this.devices.classList.add("blue")
         break
     }
   }
@@ -170,12 +174,17 @@ const deniedDeviceList = list("div.w-100.mb5", DeviceListCard)
 
 class SettingsMenu {
   constructor() {
-    this.settingsNav = el("div.w-100.h3.sticky.top-0.flex.z-999.bg-inherit.pa2", el("div", {onclick:function(e){changeNav(model.state.navpostion)}}, new SvgIcon("leftArrow")), el("div.flex-grow-1.tc" , "Settings"))
+    this.settingsNav = el("div.w-100.h3.sticky.top-0.flex.z-999.bg-inherit.pa2", el("div", {onclick:function(e){changeNav(model.state.navposition)}}, new SvgIcon("leftArrow")), el("div.flex-grow-1.tc" , "Settings"))
     this.about = el("div.w-100.pa2", " This is the settings page")
     this.toggleTheme = el("div.w-100.pa2", {onclick:function(e){changeTheme()}}, "Toggle Theme")
-    this.changelog = el("div.pt5.pa2",el("h3","Change Log"),el('ul', el('li', "Added Select option to toggle between different MAC-ID"),
+    this.changelog = el("div.pt5.pa2",el("h3","Change Log"),
+     el('ul', 
+     el('li', "Change Order of tabs in bottom Nav"),
+     el('li', "Replaced Network tab with Dashboard"),
+     el('li', "Added Select option to toggle between different MAC-ID"),
      el('li', "Change Data Structure to single JSON object"), 
-     el('li', "Added table in network tab")))
+     el('li', "Added table in network tab")
+     ))
     this.el = el("div.w-100.h-100", this.settingsNav, this.about, this.toggleTheme, this.changelog)
   }
   onmount() {
@@ -207,12 +216,11 @@ class HomePage {
   }
 }
 
-class NetworkPage {
+class DashboardPage {
   constructor() {
-    this.el = el("div.h-100.w-100.f4.z-0", new TopBar(), tableApp, new BottomNav())
+    this.el = el("div.h-100.w-100.f4.z-0", new TopBar(), new BottomNav())
   }
   onmount() {
-    detailsTable.update()
     if (!model.state.lastStateHome) {
       console.log("yes")
       this.el.classList.add("slideinleft")
@@ -276,13 +284,13 @@ class DeviceInfo {
 }
 
 const settingsMenu = new SettingsMenu()
-const Network = new NetworkPage()
+const Dashboard = new DashboardPage()
 const Home = new HomePage()
 const deviceInfo = new DeviceInfo()
 const app = router('.app.h-100', {
   home: Home,
   settings: settingsMenu,
-  network: Network,
+  dashboard: Dashboard,
   details: deviceInfo
 })
 const mainNode = el("div.w-100.h-100.flex.justify-center", {id:"mainnode"},el("div.w-100.h-100.mw8-l", app))
@@ -290,10 +298,10 @@ const mainNode = el("div.w-100.h-100.flex.justify-center", {id:"mainnode"},el("d
 function main() {
   model.state.theme == 0 ? document.body.classList.add("bg-white"):document.body.classList.add("bg-black")
   mount(document.body, mainNode)
-  app.update('home')
-  unconnecteDeviceList.update(appData.unconnectedDeviceListData)
-  allowedDeviceList.update(appData.connectedDeviceListData)
-  deniedDeviceList.update(appData.deniedDeviceListData)
+  app.update('dashboard')
+  unconnecteDeviceList.update(appData.firewall.unconnectedDeviceListData)
+  allowedDeviceList.update(appData.firewall.connectedDeviceListData)
+  deniedDeviceList.update(appData.firewall.deniedDeviceListData)
 }
 
 

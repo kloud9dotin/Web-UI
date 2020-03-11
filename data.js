@@ -1,15 +1,16 @@
 let appData = {
-  connectedDeviceListData : [["router","192.168.1.128","linksys","ab:cd:ef:gh",1],["phone","192.168.1.129","oneplus","ac:bd:ef:gh",1],
-    ["generic","192.168.1.125","gigabyte","ab:cd:ef:hg",1],["Streaming Dongle","192.168.1.228","google","ab:dc:ef:gh",1],
-    ["router","192.168.1.128","linksys","ab:cd:ef:gh",1],["phone","192.168.1.129","oneplus","ac:bd:ef:gh",1],
-    ["generic","192.168.1.125","gigabyte","ab:cd:ef:hg",1],["Streaming Dongle","192.168.1.228","google","ab:dc:ef:gh",1],
-    ["router","192.168.1.128","linksys","ab:cd:ef:gh",1],["phone","192.168.1.129","oneplus","ac:bd:ef:gh",1],
-    ["generic","192.168.1.125","gigabyte","ab:cd:ef:hg",1],["Streaming Dongle","192.168.1.228","google","ab:dc:ef:gh",1]],
+  firewall: {
+    connectedDeviceListData : [["router","192.168.1.128","linksys","ab:cd:ef:gh",1],["phone","192.168.1.129","oneplus","ac:bd:ef:gh",1],
+      ["generic","192.168.1.125","gigabyte","ab:cd:ef:hg",1],["Streaming Dongle","192.168.1.228","google","ab:dc:ef:gh",1],
+      ["router","192.168.1.128","linksys","ab:cd:ef:gh",1],["phone","192.168.1.129","oneplus","ac:bd:ef:gh",1],
+      ["generic","192.168.1.125","gigabyte","ab:cd:ef:hg",1],["Streaming Dongle","192.168.1.228","google","ab:dc:ef:gh",1],
+      ["router","192.168.1.128","linksys","ab:cd:ef:gh",1],["phone","192.168.1.129","oneplus","ac:bd:ef:gh",1],
+      ["generic","192.168.1.125","gigabyte","ab:cd:ef:hg",1],["Streaming Dongle","192.168.1.228","google","ab:dc:ef:gh",1]],
 
-  unconnectedDeviceListData : [["","192.168.1.128","linksys","ab:cd:ef:gh",0],["","192.168.1.129","oneplus","ac:bd:ef:gh",0]],
+    unconnectedDeviceListData : [["","192.168.1.128","linksys","ab:cd:ef:gh",0],["","192.168.1.129","oneplus","ac:bd:ef:gh",0]],
 
-  deniedDeviceListData : [["router","192.168.1.128","linksys","ab:cd:ef:gh",2],["phone","192.168.1.129","oneplus","ac:bd:ef:gh",2]],
-
+    deniedDeviceListData : [["router","192.168.1.128","linksys","ab:cd:ef:gh",2],["phone","192.168.1.129","oneplus","ac:bd:ef:gh",2]],
+  },
   livedata : [
     [1583847847,6,365,"192.168.7.223",49126,"172.217.167.142",443,34,46,3678,52172],
     [1583847844,6,241,"192.168.7.223",60144,"178.250.0.130",443,8,7,1005,3231],
