@@ -3,7 +3,8 @@ let model = {
   state: {
     navposition : 0,
     lastStateHome : 1,
-    theme: localStorage.getItem("theme") || 0
+    theme: localStorage.getItem("theme") || 0,
+    expandDevice : ""
   },
   data : {
     icons : {
@@ -23,6 +24,10 @@ let model = {
         classNames: ".h2.w2.pa2",
         path:"M257.5 445.1l-22.2 22.2c-9.4 9.4-24.6 9.4-33.9 0L7 273c-9.4-9.4-9.4-24.6 0-33.9L201.4 44.7c9.4-9.4 24.6-9.4 33.9 0l22.2 22.2c9.5 9.5 9.3 25-.4 34.3L136.6 216H424c13.3 0 24 10.7 24 24v32c0 13.3-10.7 24-24 24H136.6l120.5 114.8c9.8 9.3 10 24.8.4 34.3z"
       },
+      tick : {
+        classNames: ".h2.w2.pa2",
+        path:"M173.898 439.404l-166.4-166.4c-9.997-9.997-9.997-26.206 0-36.204l36.203-36.204c9.997-9.998 26.207-9.998 36.204 0L192 312.69 432.095 72.596c9.997-9.997 26.207-9.997 36.204 0l36.203 36.204c9.997 9.997 9.997 26.206 0 36.204l-294.4 294.401c-9.998 9.997-26.207 9.997-36.204-.001z"
+      },
       dashboard : {
         classNames: ".h-50.w-50",
         path:"M288 32C128.94 32 0 160.94 0 320c0 52.8 14.25 102.26 39.06 144.8 5.61 9.62 16.3 15.2 27.44 15.2h443c11.14 0 21.83-5.58 27.44-15.2C561.75 422.26 576 372.8 576 320c0-159.06-128.94-288-288-288zm0 64c14.71 0 26.58 10.13 30.32 23.65-1.11 2.26-2.64 4.23-3.45 6.67l-9.22 27.67c-5.13 3.49-10.97 6.01-17.64 6.01-17.67 0-32-14.33-32-32S270.33 96 288 96zM96 384c-17.67 0-32-14.33-32-32s14.33-32 32-32 32 14.33 32 32-14.33 32-32 32zm48-160c-17.67 0-32-14.33-32-32s14.33-32 32-32 32 14.33 32 32-14.33 32-32 32zm246.77-72.41l-61.33 184C343.13 347.33 352 364.54 352 384c0 11.72-3.38 22.55-8.88 32H232.88c-5.5-9.45-8.88-20.28-8.88-32 0-33.94 26.5-61.43 59.9-63.59l61.34-184.01c4.17-12.56 17.73-19.45 30.36-15.17 12.57 4.19 19.35 17.79 15.17 30.36zm14.66 57.2l15.52-46.55c3.47-1.29 7.13-2.23 11.05-2.23 17.67 0 32 14.33 32 32s-14.33 32-32 32c-11.38-.01-20.89-6.28-26.57-15.22zM480 384c-17.67 0-32-14.33-32-32s14.33-32 32-32 32 14.33 32 32-14.33 32-32 32z"
@@ -37,7 +42,7 @@ function changeNav(x) {
   model.state.navposition = x
   if (x == 1 ) { 
     model.state.navposition = 1
-    app.update("home")}
+    app.update("devices")}
   else { 
     model.state.navposition = 0
     app.update("dashboard")}
@@ -107,7 +112,6 @@ class TopBar {
 
 class BottomNav {
   constructor() {
-    console.log(model.state.navposition)
     this.devices = el('div.w-50.h-100.tc.f5' + (model.state.navposition ==  0 ? ".blue" : ""), {onclick:function(e){changeNav(1)}}, new SvgIcon("devices"), el("div", "Devices")) 
     this.dashboard = el('div.w-50.h-100.tc.f5' + (model.state.navposition ==  1 ? ".blue" : ""), {onclick:function(e){changeNav(0)}}, new SvgIcon("dashboard") , el("div", "Dashboard"))
 		this.el = el('div.w-100.mw8-l.h3.h3-l.fixed.bottom-0.flex.shadow-1.pa1.z-999.bg-inherit', this.dashboard, this.devices)
@@ -128,7 +132,7 @@ class BottomNav {
 
 class SummaryComponent {
   constructor() {
-    this.summary = el("div.flex-grow-1.pa2", el("div", "12 Devices"), el("div.f6", "last updated at 10:00"))
+    this.summary = el("div.flex-grow-1.pa2", el("div", "6 Devices"), el("div.f6", "last updated at 10:00"))
     this.el = el('div.w-100.h3.h3-l.mt5.flex.justify-end', this.summary)
   }
   update() {
@@ -146,23 +150,33 @@ class DeviceListCard {
     this.el
   }
   update(data) {
-    this.ipaddr = data[1]
-    this.name = data[0]
-    this.manufacturer = data[2]
-    this.macid = data[3]
+    this.ipaddr = routerData.devices[data].ipaddr
+    this.name = routerData.devices[data].name
+    this.manufacturer = routerData.devices[data].manufacturer
+    this.macid = data
     let macid = this.macid
-    let name  = this.name
-    let ipaddr = this.ipaddr
-    this.connectState = data[4]
-    let connectState = this.connectState
+    //let name  = this.name
+    //let ipaddr = this.ipaddr
+    this.connectState = routerData.devices[data].status
+    //let connectState = this.connectState
+    this.connectionStateRadio = el("form.pa2.w-100.tc", {name:"connectionState",}, el("input", {type:"radio",name:"connectionState",id:"allow",value:"allow"}),el("label", {for:"allow"}, "Allow"),el("input", {type:"radio",name:"connectionState",id:"deny",value:"deny"}),el("label", {for:"deny"}, "Deny"))
+    this.confirmAction = el("div.w100.tc", el("button", "Apply"), el("button", "Discard"))
+    this.nameInput = el("input.pa2", {onclick:function(e) {e.stopPropagation()},placeholder:this.name})
     this.logo = el("div.w-10")
-    this.deviceSummary = el("div.flex-grow-1.pa2", el("div.f6.f4-l", this.name), el("div.f7.f5-l", this.ipaddr))
+    this.deviceSummary = el("div.flex-grow-1.pa2", el("div.f6.f4-l", (model.state.expandDevice == macid ? this.nameInput  : this.name)), el("div.f7.f5-l", this.ipaddr))
     this.deviceManufacturer = el("div.flex-grow-1.pa2.tr", el("div.f6.f4-l", this.manufacturer), el("div.f7.f5-l", this.macid))
     this.addDevice = el("div.w-100.flex", el("button.bg-green.bn.f5.pa1.flex-grow-1", "accept"),el("button.bn.bg-red.f5.pa1.flex-grow-1", "reject"))
-    this.el = el("div.w-100.pa2", el("div.w-100.bt.flex.justify-end", {onclick:function(e){
-      app.update("details", [macid, ipaddr, name, connectState] )}
-    }, this.logo, this.deviceSummary, this.deviceManufacturer))
-    }
+    this.el = el("div.w-100.pa2.", el("div.w-100.bt.flex.justify-end", {onclick:function(e){
+      if (model.state.expandDevice == macid) {
+        model.state.expandDevice = ""
+      }
+      else {
+        model.state.expandDevice = macid
+      }
+      Devices.update()
+      /*app.update("details", [macid, ipaddr, name, connectState] )*/}
+    }, this.logo, this.deviceSummary, this.deviceManufacturer), (model.state.expandDevice == macid && this.connectionStateRadio),(model.state.expandDevice == macid && this.confirmAction) )
+  }   
 }
 
 const topBar = new TopBar()
@@ -174,7 +188,7 @@ const deniedDeviceList = list("div.w-100.mb5", DeviceListCard)
 
 class SettingsMenu {
   constructor() {
-    this.settingsNav = el("div.w-100.h3.sticky.top-0.flex.z-999.bg-inherit.pa2", el("div", {onclick:function(e){changeNav(model.state.navposition)}}, new SvgIcon("leftArrow")), el("div.flex-grow-1.tc" , "Settings"))
+    this.settingsNav = el("div.w-100.h3.sticky.top-0.flex.z-999.bg-inherit.pa2.items-center", el("div", {onclick:function(e){changeNav(model.state.navposition)}}, new SvgIcon("leftArrow")), el("div.flex-grow-1.tc.blue" , "Settings"))
     this.about = el("div.w-100.pa2", " This is the settings page")
     this.toggleTheme = el("div.w-100.pa2", {onclick:function(e){changeTheme()}}, "Toggle Theme")
     this.changelog = el("div.pt5.pa2",el("h3","Change Log"),
@@ -196,14 +210,13 @@ class SettingsMenu {
   }
 }
 
-class HomePage {
+class DevicesPage {
   constructor() {
     
     this.el = el("div.h-100.w-100.f4.z-0.bg-inherit", new TopBar(), summaryComponent, el("div.pa2","Pending"), unconnecteDeviceList, el("div.pa2", "Allowed"), allowedDeviceList,  el("div.pa2", "Denied"), deniedDeviceList,  new BottomNav())
   }
   onmount() {
     if (!model.state.lastStateHome) {
-      console.log("yes")
       this.el.classList.add("slideinleft")
     }
     model.state.lastStateHome = 1
@@ -212,7 +225,10 @@ class HomePage {
     this.el.classList.remove("slideinleft")
   }
   update() {
-
+    let deviceKeys = Object.keys(routerData.devices)
+    unconnecteDeviceList.update(deviceKeys.filter(k => routerData.devices[k].status == 0))
+    allowedDeviceList.update(deviceKeys.filter(k => routerData.devices[k].status == 1))
+    deniedDeviceList.update(deviceKeys.filter(k => routerData.devices[k].status == 2))
   }
 }
 
@@ -221,6 +237,7 @@ class DashboardPage {
     this.el = el("div.h-100.w-100.f4.z-0", new TopBar(), new BottomNav())
   }
   onmount() {
+
     if (!model.state.lastStateHome) {
       console.log("yes")
       this.el.classList.add("slideinleft")
@@ -238,11 +255,12 @@ class DashboardPage {
 class DeviceInfo {
   constructor() {
     this.deviceMac, this.ipaddr, this.name, this.connectState
-    this.deviceDetailsNav = el("div.w-100.h3.sticky.top-0.flex.z-999.bg-inherit.pa2", el("div", {onclick:function(e){app.update("home")}},new SvgIcon("leftArrow")), el("div.flex-grow-1.tc" , "Device Details"))
-    this.MACID = el("div.w-100")
-    this.IPADDR = el("div.w-100")
-    this.nameLabel = el("span", "Name ")
-    this.deviceName = el("input", {oninput:function(e){
+    this.save = el("div", {onclick:function(e){console.log("saving")}},new SvgIcon("tick"))
+    this.deviceDetailsNav = el("div.w-100.h3.sticky.top-0.flex.z-999.bg-inherit.pa2.items-center", el("div", {onclick:function(e){app.update("devices")}},new SvgIcon("leftArrow")), el("div.flex-grow-1.tc.blue" , "Device Details"), this.save)
+    this.MACID = el("div.w-100.pa2")
+    this.IPADDR = el("div.w-100.pa2")
+    this.nameLabel = el("span.pa2", "Name ")
+    this.deviceName = el("input.pa2", {oninput:function(e){
       if (deviceInfo.connectState == 0 ) {
         if (this.value.length > 0 ) {
           document.forms["connectionState"]["allow"].checked = true
@@ -251,11 +269,9 @@ class DeviceInfo {
           document.forms["connectionState"]["deny"].checked = true
         }
       }
-    }})
-    this.connectionStateRadio = el("form", {name:"connectionState"}, el("input", {type:"radio",name:"connectionState",id:"allow",value:"allow"}),el("label", {for:"allow"}, "Allow"),el("input", {type:"radio",name:"connectionState",id:"deny",value:"deny"}),el("label", {for:"deny"}, "Deny"))
-    this.save = el("button","save")
-    this.cancel = el("button", "Cancel")
-    this.el = el("div.w-100.h-100.pa2", this.deviceDetailsNav, this.MACID, this.IPADDR, this.nameLabel, this.deviceName, this.connectionStateRadio, this.save, this.cancel)
+    }}),
+    this.connectionStateRadio = el("form.pa2", {name:"connectionState"}, el("input", {type:"radio",name:"connectionState",id:"allow",value:"allow"}),el("label", {for:"allow"}, "Allow"),el("input", {type:"radio",name:"connectionState",id:"deny",value:"deny"}),el("label", {for:"deny"}, "Deny"))
+    this.el = el("div.w-100.h-100.tc", this.deviceDetailsNav, this.MACID, this.IPADDR, this.nameLabel, this.deviceName, this.connectionStateRadio, this.cancel)
   }
   update(data) {
     model.state.lastStateHome = 0
@@ -285,10 +301,10 @@ class DeviceInfo {
 
 const settingsMenu = new SettingsMenu()
 const Dashboard = new DashboardPage()
-const Home = new HomePage()
+const Devices = new DevicesPage()
 const deviceInfo = new DeviceInfo()
 const app = router('.app.h-100', {
-  home: Home,
+  devices: Devices,
   settings: settingsMenu,
   dashboard: Dashboard,
   details: deviceInfo
@@ -299,9 +315,7 @@ function main() {
   model.state.theme == 0 ? document.body.classList.add("bg-white"):document.body.classList.add("bg-black")
   mount(document.body, mainNode)
   app.update('dashboard')
-  unconnecteDeviceList.update(appData.firewall.unconnectedDeviceListData)
-  allowedDeviceList.update(appData.firewall.connectedDeviceListData)
-  deniedDeviceList.update(appData.firewall.deniedDeviceListData)
+  Devices.update()
 }
 
 
